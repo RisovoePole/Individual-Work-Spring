@@ -1,0 +1,16 @@
+
+version: "3.9"
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: "SchedulegenDB"
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "oHQjGK83gXLWdhhwwQmE"
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_dev_data:/var/lib/postgresql/data
+
+volumes:
+  pg_dev_data:
