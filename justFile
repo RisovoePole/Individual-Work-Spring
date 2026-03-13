@@ -1,0 +1,7 @@
+set shell := ["bash", "-cu"]
+
+dev:
+    source .env
+    docker-compose -f docker-DB.yml down -v
+    docker-compose -f docker-DB.yml up -d
+    mvn spring-boot:run
