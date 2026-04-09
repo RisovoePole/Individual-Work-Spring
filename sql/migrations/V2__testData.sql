@@ -1,68 +1,197 @@
--- Audience (3 записи)
-INSERT INTO Audience (room_name, university_building, amount_of_seats) VALUES
-('A101', 1, 60),
-('B205', 2, 45),
-('C312', 3, 80);
+BEGIN;
 
--- RoomType (3 записи)
-INSERT INTO RoomType (room_type_name) VALUES
-('Lecture'),
-('Seminar'),
-('Laboratory');
+-- Временно отключим ограничения внешних ключей (чтобы вставить из-за порядка)
+SET CONSTRAINTS ALL DEFERRED;
 
--- Audience_RoomType (3 связи)
-INSERT INTO Audience_RoomType (room_type_id, audience_id) VALUES
-(1, 1),  -- A101 = Lecture
-(2, 2),  -- B205 = Seminar
-(3, 3);  -- C312 = Laboratory
+-- Faculty (факультеты)
+INSERT INTO faculty (faculty_name) VALUES
+    ('Математики и информатики'),
+    ('Информационных технологий')
+;
 
--- Professor (3 записи)
-INSERT INTO Professor (first_name, last_name, email, phone_number) VALUES
-('Иван', 'Петров', 'petrov@uni.md', '+3731234567'),
-('Мария', 'Сидорова', 'sidorova@uni.md', '+3737654321'),
-('Алексей', 'Иванов', 'ivanov@uni.md', '+37311223344');
+-- Specialization (специализации)
+INSERT INTO specialization (spec_name, faculty_id, years_of_study) VALUES
+    -- Факультет Математики и информатики
+    ('Математика', 1, 4),
+    ('Прикладная математика и информатика', 1, 4),
+    ('Информатика и ИКТ', 1, 4),
+    -- Факультет Информационных технологий
+    ('Программная инженерия', 2, 4),
+    ('Информационная безопасность', 2, 5),
+    ('Системный анализ и управление', 2, 4)
+;
 
--- Faculty (3 записи)
-INSERT INTO Faculty (faculty_name) VALUES
-('Факультет информатики'),
-('Факультет математики'),
-('Факультет физики');
+-- Roomtype (типы аудиторий)
+INSERT INTO roomtype (room_type_name) VALUES
+    ('Лекционный зал'),
+    ('Компьютерный класс'),
+    ('Лаборатория ПО'),
+    ('Лаборатория БД'),
+    ('Семинарский зал'),
+    ('Обычная аудитория')
+;
 
--- Specialization (3 записи)
-INSERT INTO Specialization (spec_name, faculty_id, years_of_study) VALUES
-('Программная инженерия', 1, 4),
-('Прикладная математика', 2, 4),
-('Информатика', 1, 4);
+-- Audience (аудитории)
+INSERT INTO audience (room_name, university_building, amount_of_seats) VALUES
+    ('101А', 1, 100),
+    ('102А', 1, 100),
+    ('201Б', 2, 40),
+    ('202Б', 2, 40),
+    ('301В', 3, 30),
+    ('302В', 3, 30)
+;
 
--- Discipline (3 записи)
-INSERT INTO Discipline (
-    discipline_name, study_semester, required_room_type, credits, spec_id,
-    contact_study_hours, independent_study_hours, course_hours, seminar_hours, laboratories_hours
-) VALUES
-('Алгоритмы и структуры данных', 4, 1, 6.0, 1, 60, 90, 40, 10, 10),
-('Базы данных', 5, 3, 5.0, 1, 48, 72, 0, 16, 32),
-('Операционные системы', 6, 1, 4.5, 1, 36, 54, 24, 8, 4);
+-- Audience_roomtype (связь аудитория – тип)
+INSERT INTO audience_roomtype (audience_id, room_type_id) VALUES
+    (1, 1), -- 101А – лекционный зал
+    (2, 1), -- 102А – лекционный зал
+    (3, 2), -- 201Б – компьютерный класс
+    (4, 3), -- 202Б – лаборатория ПО
+    (5, 3), -- 301В – лаборатория ПО
+    (6, 6)  -- 302В – обычная аудитория
+;
 
--- Students_Group (3 записи)
-INSERT INTO Students_Group (group_name, professor_inspector, spec_id) VALUES
-('ИТ-41', 1, 1),
-('ИТ-42', 2, 1),
-('МАТ-41', 3, 2);
+-- PairTimeBorders (пары по времени)
+INSERT INTO pairtimeborders (pair_start, pair_end) VALUES
+    ('08:00', '09:30'),
+    ('09:45', '11:15'),
+    ('11:30', '13:00'),
+    ('13:45', '15:15'),
+    ('15:30', '17:00')
+;
 
--- Student (3 записи)
-INSERT INTO Student (students_group_id, first_name, last_name, email) VALUES
-(1, 'Виктор', 'Анисимов', 'victor@uni.md'),
-(1, 'Анна', 'Кузнецова', 'anna@uni.md'),
-(2, 'Дмитрий', 'Смирнов', 'dmitry@uni.md');
+-- Timeslot (слоты по дням и парам)
+INSERT INTO timeslot (day_of_week, pair_number) VALUES
+    (1, 1), -- понедельник, пара 1
+    (1, 2), -- понедельник, пара 2
+    (1, 3), -- понедельник, пара 3
+    (2, 1), -- вторник, пара 1
+    (2, 2), -- вторник, пара 2
+    (3, 1), -- среда, пара 1
+    (3, 2), -- среда, пара 2
+    (4, 1), -- четверг, пара 1
+    (5, 1)  -- пятница, пара 1
+;
 
--- Group_Elder_student (3 связи)
-INSERT INTO Group_Elder_student (students_group_id, student_id) VALUES
-(1, 1),  -- Виктор - староста ИТ-41
-(2, 3),  -- Дмитрий - староста ИТ-42
-(3, 1);  -- Виктор - староста МАТ-41 (второй группе)
+-- Professor (преподаватели)
+INSERT INTO professor (first_name, last_name, email, phone_number) VALUES
+    ('Александр', 'Иванов', 'ivanov@uni.edu', '+373123456789'),
+    ('Мария', 'Петрова', 'petrova@uni.edu', '+373123456790'),
+    ('Сергей', 'Сидоров', 'sidorov@uni.edu', '+373123456791'),
+    ('Анна', 'Ковалёва', 'koval@uni.edu', '+373123456792'),
+    ('Дмитрий', 'Морозов', 'moroz@uni.edu', '+373123456793'),
+    ('Елена', 'Фёдорова', 'fedorov@uni.edu', '+373123456794')
+;
 
--- Professor_Discipline (3 связи)
-INSERT INTO Professor_Discipline (professor_id, discipline_id) VALUES
-(1, 1),  -- Петров ведет Алгоритмы
-(2, 2),  -- Сидорова ведет Базы данных
-(3, 3);  -- Иванов ведет Операционные системы
+-- Disciplines (дисциплины)
+INSERT INTO discipline (discipline_name, study_semester, required_room_type, credits, spec_id) VALUES
+    -- Математика
+    ('Математический анализ', 1, 6, 6.0, 1),
+    ('Линейная алгебра', 1, 6, 5.0, 1),
+    ('Дискретная математика', 2, 6, 5.0, 1),
+    -- Прикладная математика и И
+    ('Оптимизация и исследования операций', 3, 6, 5.0, 2),
+    ('Математическое моделирование', 4, 6, 5.0, 2),
+    -- Информатика и ИКТ
+    ('Основы программирования', 1, 2, 6.0, 3),
+    ('Структуры данных и алгоритмы', 2, 2, 6.0, 3),
+    ('Информационные системы', 3, 2, 5.0, 3),
+    -- Программная инженерия
+    ('Java-разработка', 2, 2, 6.0, 4),
+    ('Spring Framework', 3, 2, 6.0, 4),
+    ('DevOps и CI/CD', 4, 4, 5.0, 4),
+    -- Информационная безопасность
+    ('Криптография', 3, 6, 5.0, 5),
+    ('Защита сетевых приложений', 4, 6, 6.0, 5),
+    -- Системный анализ
+    ('Системный анализ и проектирование', 3, 6, 5.0, 6),
+    ('ERP‑системы', 4, 4, 5.0, 6)
+;
+
+-- Professor_discipline (кто какую дисциплину читает)
+INSERT INTO professor_discipline (professor_id, discipline_id) VALUES
+    (1, 1), (1, 2), (1, 3), -- Александр – математика
+    (2, 4), (2, 5),         -- Мария – прикладная математика
+    (3, 6), (3, 7),         -- Сергей – информатика (программирование)
+    (4, 8), (4, 9),         -- Анна – информационные системы
+    (5, 10), (5, 11),       -- Дмитрий – Java / Spring
+    (6, 12), (6, 13),       -- Елена – безопасность
+    (1, 14), (4, 15)        -- Александр – системный анализ, Анна – ERP
+;
+
+-- Study_hours (часы по дисциплинам)
+INSERT INTO study_hours (discipline_id, contact_study_hours, independent_study_hours,
+                         course_hours, seminar_hours, laboratories_hours) VALUES
+    -- Матан
+    (1, 60, 90, 0, 30, 0),
+    (2, 45, 75, 0, 15, 0),
+    (3, 45, 75, 0, 15, 0),
+    -- Прикладная математика
+    (4, 45, 75, 30, 0, 0),
+    (5, 45, 75, 30, 0, 0),
+    -- Информатика и ИКТ
+    (6, 30, 60, 0, 0, 30),
+    (7, 30, 60, 15, 0, 15),
+    (8, 30, 60, 15, 0, 15),
+    -- Программная инженерия
+    (9, 30, 60, 0, 0, 45),
+    (10, 45, 90, 30, 0, 30),
+    (11, 30, 50, 0, 0, 40),
+    -- Информационная безопасность
+    (12, 45, 75, 15, 15, 15),
+    (13, 45, 75, 15, 15, 15),
+    -- Системный анализ
+    (14, 45, 75, 0, 15, 15),
+    (15, 30, 60, 0, 15, 15)
+;
+
+-- Students_group (группы)
+INSERT INTO students_group (group_name, professor_inspector, spec_id) VALUES
+    ('M1-01', 1, 1), -- Математика
+    ('M1-02', 2, 1), -- Математика
+    ('P1-01', 2, 2), -- Прикладная математика и И
+    ('I1-01', 3, 3), -- Информатика и ИКТ
+    ('I2-01', 4, 3),
+    ('PI-101', 5, 4), -- Программная инженерия
+    ('PI-102', 5, 4),
+    ('IB-101', 6, 5), -- Информационная безопасность
+    ('SA-101', 1, 6)  -- Системный анализ
+;
+
+-- Student (студенты)
+INSERT INTO student (students_group_id, first_name, last_name, email) VALUES
+    (1, 'Иван', 'Коваль', 'ivan.koval@uni.edu'),
+    (1, 'Олена', 'Бондар', 'olena.bondar@uni.edu'),
+    (1, 'Дмитро', 'Гончар', 'dmitro.gonchar@uni.edu'),
+    (2, 'Антон', 'Мельник', 'anton.melnik@uni.edu'),
+    (2, 'Марія', 'Скрипник', 'maria.scripnyk@uni.edu'),
+    (3, 'Сергій', 'Ковальчук', 'sergey.kovalchuk@uni.edu'),
+    (3, 'Анна', 'Литвин', 'anna.litvin@uni.edu'),
+    (4, 'Віктор', 'Анісімов', 'victor.anisimov@uni.edu'),
+    (4, 'Артем', 'Савченко', 'artem.savchenko@uni.edu'),
+    (5, 'Ілля', 'Кравченко', 'illya.kravchenko@uni.edu'),
+    (6, 'Михайло', 'Романюк', 'mikhail.romaniuk@uni.edu'),
+    (6, 'Катерина', 'Костюк', 'kateryna.kostyuk@uni.edu'),
+    (7, 'Денис', 'Павлов', 'denis.pavlov@uni.edu'),
+    (7, 'Олександр', 'Тимошенко', 'alex.tymoshenko@uni.edu'),
+    (8, 'Наталія', 'Мельник', 'natalia.melnik@uni.edu'),
+    (8, 'Владислав', 'Горбач', 'vladyslav.horbach@uni.edu'),
+    (9, 'Тетяна', 'Шевчук', 'tetyana.shevchuk@uni.edu'),
+    (9, 'Роман', 'Коваль', 'roman.koval@uni.edu')
+;
+
+-- Group_elder_student (старосты)
+INSERT INTO group_elder_student (students_group_id, student_id) VALUES
+    (1, 1), -- Иван Коваль – староста M1-01
+    (2, 4), -- Антон Мельник – староста M1-02
+    (3, 6), -- Сергій Ковальчук – староста P1-01
+    (4, 8), -- Віктор Анісімов – староста I1-01
+    (5, 11), -- Ілля Кравченко – староста I2-01
+    (6, 12), -- Михайло Романюк – староста PI-101
+    (7, 14), -- Денис Павлов – староста PI-102
+    (8, 16), -- Наталія Мельник – староста IB-101
+    (9, 18)  -- Тетяна Шевчук – староста SA-101
+;
+
+
+COMMIT;

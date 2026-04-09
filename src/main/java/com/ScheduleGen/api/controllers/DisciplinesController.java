@@ -1,6 +1,5 @@
 package com.ScheduleGen.api.controllers;
 
-
 import com.ScheduleGen.infrastructure.persistence.repos.DisciplineRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
