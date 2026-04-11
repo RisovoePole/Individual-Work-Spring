@@ -6,3 +6,9 @@ Topic of the work: Schedule generation using a genetic algorithm
   * Стереотип: Это общий стереотип. Специализированные аннотации, такие как @Service (логика), @Repository (хранилище данных) и @Controller (представление), наследуют @Component и предоставляют дополнительный функционал. 
   * Синглтон: По умолчанию создается один экземпляр бина (Singleton).
 
+## Запуск проекта
+
+```bash
+nix develop
+just dev
+```
