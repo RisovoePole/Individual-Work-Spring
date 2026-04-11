@@ -42,10 +42,10 @@ public class DisciplineEntity {
     @OneToOne(mappedBy = "discipline", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private StudyHoursEntity studyHours;
 
-    @OneToMany(mappedBy = "discipline", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "discipline", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProfessorDiscipline> professorDisciplines = new ArrayList<>();
 
-    @OneToMany(mappedBy = "discipline", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "discipline", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ScheduleEntity> scheduleEntities = new ArrayList<>();
 }
 
