@@ -1,23 +1,66 @@
 package com.ScheduleGen.api.controllers;
 
-import com.ScheduleGen.infrastructure.persistence.repos.DisciplineRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ScheduleGen.api.dtos.CreateRequestDTOs.CreateDisciplineDTO;
+import com.ScheduleGen.api.dtos.PatchRequestDTOs.PatchDisciplineDTO;
+import com.ScheduleGen.api.dtos.ResponseDTOs.DisciplineDTO;
+import com.ScheduleGen.api.dtos.UpdateRequestDTOs.UpdateDisciplineDTO;
+import com.ScheduleGen.domain.services.DisciplineService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/disciplines")
 public class DisciplinesController {
 
-    @Autowired
-    private DisciplineRepo disciplineRepo;
+    private final DisciplineService service;
+
+    public DisciplinesController(DisciplineService service) {
+        this.service = service;
+    }
+
+    @PostMapping
+    public ResponseEntity<DisciplineDTO> create(@Valid @RequestBody CreateDisciplineDTO discipline){
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(service.create(discipline));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DisciplineDTO> get(@PathVariable Integer id) {
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .body(service.getDiscipline(id));
+    }
 
     @GetMapping
-    public ResponseEntity<String> list(){
-        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.TEXT_PLAIN).body(disciplineRepo.findAll().toString());
+    public ResponseEntity<List<DisciplineDTO>> getAll(){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(service.getAll());
+    }
+
+    @PatchMapping
+    public ResponseEntity<DisciplineDTO> patch(@Valid @RequestBody PatchDisciplineDTO discipline){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(service.patch(discipline));
+    }
+
+    @PutMapping
+    public ResponseEntity<DisciplineDTO> update(@Valid @RequestBody UpdateDisciplineDTO discipline){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(service.update(discipline));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<DisciplineDTO> delete(@NotNull @Positive @PathVariable Integer id){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(service.deleteById(id));
     }
 }
