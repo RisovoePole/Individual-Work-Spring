@@ -23,22 +23,22 @@ public class GlobalExceptionHandler {
     }
 
     // Валидация DTO (@Valid на @RequestBody)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleValidation(MethodArgumentNotValidException ex) {
-        List<String> errors = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(f -> f.getField() + ": " + f.getDefaultMessage())
-                .toList();
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(
-                        "Validation failed: " + errors.toString(),
-                        400,
-                        LocalDateTime.now()
-                        ));
-    }
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    public ResponseEntity<?> handleValidation(MethodArgumentNotValidException ex) {
+//        List<String> errors = ex.getBindingResult()
+//                .getFieldErrors()
+//                .stream()
+//                .map(f -> f.getField() + ": " + f.getDefaultMessage())
+//                .toList();
+//
+//        return ResponseEntity
+//                .status(HttpStatus.BAD_REQUEST)
+//                .body(new ErrorResponse(
+//                        "Validation failed: " + errors.toString(),
+//                        400,
+//                        LocalDateTime.now()
+//                        ));
+//    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleUnknown(Exception ex) {
