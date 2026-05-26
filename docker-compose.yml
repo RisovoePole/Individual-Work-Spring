@@ -1,10 +1,13 @@
 services:
-  postgres:
+
+
+  db:
     image: postgres:latest
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - "4444:5432"
     volumes:
@@ -15,6 +18,26 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+    networks:
+      - internal
+
+  backend:
+    build: .
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - internal
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+
 volumes:
   pg_dev_data:
 
+networks:
+  internal: {}
