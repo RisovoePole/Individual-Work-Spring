@@ -56,6 +56,15 @@
 
 ## Архитектура проекта
 
+Проект построен по слоистой архитектуре:
+
+- `api` — REST-контроллеры, DTO и валидация входных данных.
+- `application` — мапперы, общая обработка ошибок и вспомогательные классы для API.
+- `domain` — бизнес-сущности, сервисы и доменные исключения.
+- `infrastructure` — JPA-сущности, репозитории и мапперы для работы с БД.
+
+Сейчас основной публичный сценарий реализован для CRUD-операций над `Discipline`: запрос приходит в `DisciplinesController`, дальше проходит через сервисный слой и сохраняется/читается через инфраструктурный слой.
+
 ### Основные пакеты
 
 ``` text
@@ -101,12 +110,14 @@ src/main/java/com/ScheduleGen/
 
 Минимальные переменные для запуска приложения (пример для локальной разработки):
 
-- `SPRING_DATASOURCE_URL`: URL базы данных PostgreSQL, например `jdbc:postgresql://localhost:5432/schedulegen`
-- `SPRING_DATASOURCE_USERNAME`: имя пользователя БД
-- `SPRING_DATASOURCE_PASSWORD`: пароль пользователя БД
-- `SPRING_PROFILES_ACTIVE` (опционально): профиль Spring (например, `dev`)
+- `DB_URL`: JDBC URL базы данных, используемый приложением и Flyway, например `jdbc:postgresql://db:5432/SchedulegenDB`
+- `DB_LOCAL_URL`: локальный JDBC URL (используется в `Justfile` для локальных миграций), например `jdbc:postgresql://localhost:4444/SchedulegenDB`
+- `DB_NAME`: имя базы (используется в `docker-compose`)
+- `DB_USER`: имя пользователя БД
+- `DB_PASSWORD`: пароль пользователя БД
+- `SERVER_PORT` (опционально): порт, на котором слушает Spring Boot (по умолчанию `8080`)
 
-Файлы миграций применяются автоматически Flyway при старте приложения.
+Файлы миграций применяются автоматически Flyway при старте приложения. Переменные подключаются через `src/main/resources/application.properties` (`DB_URL`, `DB_USER`, `DB_PASSWORD`).
 
 ## Запуск проекта
 
