@@ -1,197 +1,169 @@
 BEGIN;
 
--- Временно отключим ограничения внешних ключей (чтобы вставить из-за порядка)
-SET CONSTRAINTS ALL DEFERRED;
+-- 1. BUILDING
+INSERT INTO building (building_name, address) VALUES
+('Central корпус', 'ул. Пушкина 10'),
+('Корпус информатики', 'ул. Студенческая 5'),
+('Лабораторный корпус', 'ул. Университетская 1');
 
--- Faculty (факультеты)
-INSERT INTO faculty (faculty_name) VALUES
-    ('Математики и информатики'),
-    ('Информационных технологий')
-;
+-- 2. AUDIENCE
+INSERT INTO audience (room_name, building_id, amount_of_seats) VALUES
+('A101', 1, 120),
+('B205', 2, 40),
+('L301', 3, 25);
 
--- Specialization (специализации)
-INSERT INTO specialization (spec_name, faculty_id, years_of_study) VALUES
-    -- Факультет Математики и информатики
-    ('Математика', 1, 4),
-    ('Прикладная математика и информатика', 1, 4),
-    ('Информатика и ИКТ', 1, 4),
-    -- Факультет Информационных технологий
-    ('Программная инженерия', 2, 4),
-    ('Информационная безопасность', 2, 5),
-    ('Системный анализ и управление', 2, 4)
-;
-
--- Roomtype (типы аудиторий)
+-- 3. ROOMTYPE
 INSERT INTO roomtype (room_type_name) VALUES
-    ('Лекционный зал'),
-    ('Компьютерный класс'),
-    ('Лаборатория ПО'),
-    ('Лаборатория БД'),
-    ('Семинарский зал'),
-    ('Обычная аудитория')
-;
+('Lecture'),
+('Seminar'),
+('Laboratory');
 
--- Audience (аудитории)
-INSERT INTO audience (room_name, university_building, amount_of_seats) VALUES
-    ('101А', 1, 100),
-    ('102А', 1, 100),
-    ('201Б', 2, 40),
-    ('202Б', 2, 40),
-    ('301В', 3, 30),
-    ('302В', 3, 30)
-;
+-- 4. AUDIENCE_ROOMTYPE
+INSERT INTO audience_roomtype (room_type_id, audience_id) VALUES
+(1, 1),
+(2, 2),
+(3, 3);
 
--- Audience_roomtype (связь аудитория – тип)
-INSERT INTO audience_roomtype (audience_id, room_type_id) VALUES
-    (1, 1), -- 101А – лекционный зал
-    (2, 1), -- 102А – лекционный зал
-    (3, 2), -- 201Б – компьютерный класс
-    (4, 3), -- 202Б – лаборатория ПО
-    (5, 3), -- 301В – лаборатория ПО
-    (6, 6)  -- 302В – обычная аудитория
-;
-
--- PairTimeBorders (пары по времени)
+-- 5. PAIRTIMEBORDERS
 INSERT INTO pairtimeborders (pair_start, pair_end) VALUES
-    ('08:00', '09:30'),
-    ('09:45', '11:15'),
-    ('11:30', '13:00'),
-    ('13:45', '15:15'),
-    ('15:30', '17:00')
-;
+('08:00', '09:30'),
+('09:45', '11:15'),
+('11:30', '13:00');
 
--- Timeslot (слоты по дням и парам)
+-- 6. TIMESLOT
 INSERT INTO timeslot (day_of_week, pair_number) VALUES
-    (1, 1), -- понедельник, пара 1
-    (1, 2), -- понедельник, пара 2
-    (1, 3), -- понедельник, пара 3
-    (2, 1), -- вторник, пара 1
-    (2, 2), -- вторник, пара 2
-    (3, 1), -- среда, пара 1
-    (3, 2), -- среда, пара 2
-    (4, 1), -- четверг, пара 1
-    (5, 1)  -- пятница, пара 1
-;
+(1, 1), -- Monday, 1st pair
+(1, 2),
+(2, 1);
 
--- Professor (преподаватели)
+-- 7. FACULTY
+INSERT INTO faculty (faculty_name) VALUES
+('Computer Science'),
+('Mathematics'),
+('Physics');
+
+-- 8. SPECIALIZATION
+INSERT INTO specialization (spec_name, faculty_id, years_of_study) VALUES
+('Software Engineering', 1, 4),
+('Applied Mathematics', 2, 4),
+('Theoretical Physics', 3, 4);
+
+-- 9. SUBGROUP
+INSERT INTO subgroup (subgroup_name) VALUES
+('A'),
+('B'),
+('C');
+
+-- 10. STUDENTS_GROUP
+INSERT INTO students_group (group_name, spec_id, students_count) VALUES
+('SE-221', 1, 28),
+('AM-221', 2, 24),
+('TP-221', 3, 20);
+
+-- 11. STUDENTS_GROUP_SUBGROUP
+INSERT INTO students_group_subgroup (students_group_id, subgroup_id) VALUES
+(1, 1),
+(1, 2),
+(2, 3);
+
+-- 12. PROFESSOR
 INSERT INTO professor (first_name, last_name, email, phone_number) VALUES
-    ('Александр', 'Иванов', 'ivanov@uni.edu', '+373123456789'),
-    ('Мария', 'Петрова', 'petrova@uni.edu', '+373123456790'),
-    ('Сергей', 'Сидоров', 'sidorov@uni.edu', '+373123456791'),
-    ('Анна', 'Ковалёва', 'koval@uni.edu', '+373123456792'),
-    ('Дмитрий', 'Морозов', 'moroz@uni.edu', '+373123456793'),
-    ('Елена', 'Фёдорова', 'fedorov@uni.edu', '+373123456794')
-;
+('Ion', 'Popescu', 'ion.popescu@usm.md', '+37360000001'),
+('Maria', 'Ionescu', 'maria.ionescu@usm.md', '+37360000002'),
+('Victor', 'Rusu', 'victor.rusu@usm.md', '+37360000003');
 
--- Disciplines (дисциплины)
-INSERT INTO discipline (discipline_name, study_semester, required_room_type, credits, spec_id) VALUES
-    -- Математика
-    ('Математический анализ', 1, 6, 6.0, 1),
-    ('Линейная алгебра', 1, 6, 5.0, 1),
-    ('Дискретная математика', 2, 6, 5.0, 1),
-    -- Прикладная математика и И
-    ('Оптимизация и исследования операций', 3, 6, 5.0, 2),
-    ('Математическое моделирование', 4, 6, 5.0, 2),
-    -- Информатика и ИКТ
-    ('Основы программирования', 1, 2, 6.0, 3),
-    ('Структуры данных и алгоритмы', 2, 2, 6.0, 3),
-    ('Информационные системы', 3, 2, 5.0, 3),
-    -- Программная инженерия
-    ('Java-разработка', 2, 2, 6.0, 4),
-    ('Spring Framework', 3, 2, 6.0, 4),
-    ('DevOps и CI/CD', 4, 4, 5.0, 4),
-    -- Информационная безопасность
-    ('Криптография', 3, 6, 5.0, 5),
-    ('Защита сетевых приложений', 4, 6, 6.0, 5),
-    -- Системный анализ
-    ('Системный анализ и проектирование', 3, 6, 5.0, 6),
-    ('ERP‑системы', 4, 4, 5.0, 6)
-;
+-- 13. DISCIPLINE
+INSERT INTO discipline (
+    discipline_name,
+    study_semester,
+    required_room_type,
+    credits,
+    spec_id,
+    contact_hours,
+    independent_hours,
+    course_hours,
+    seminar_hours,
+    lab_hours
+) VALUES
+('Java Programming', 4, 3, 6, 1, 90, 60, 30, 15, 45),
+('Discrete Mathematics', 2, 2, 5, 2, 75, 45, 45, 30, 0),
+('Quantum Mechanics', 6, 1, 6, 3, 90, 60, 60, 30, 0);
 
--- Professor_discipline (кто какую дисциплину читает)
+-- 14. PROFESSOR_DISCIPLINE
 INSERT INTO professor_discipline (professor_id, discipline_id) VALUES
-    (1, 1), (1, 2), (1, 3), -- Александр – математика
-    (2, 4), (2, 5),         -- Мария – прикладная математика
-    (3, 6), (3, 7),         -- Сергей – информатика (программирование)
-    (4, 8), (4, 9),         -- Анна – информационные системы
-    (5, 10), (5, 11),       -- Дмитрий – Java / Spring
-    (6, 12), (6, 13),       -- Елена – безопасность
-    (1, 14), (4, 15)        -- Александр – системный анализ, Анна – ERP
-;
+(1, 1),
+(2, 2),
+(3, 3);
 
--- Study_hours (часы по дисциплинам)
-INSERT INTO study_hours (discipline_id, contact_study_hours, independent_study_hours,
-                         course_hours, seminar_hours, laboratories_hours) VALUES
-    -- Матан
-    (1, 60, 90, 0, 30, 0),
-    (2, 45, 75, 0, 15, 0),
-    (3, 45, 75, 0, 15, 0),
-    -- Прикладная математика
-    (4, 45, 75, 30, 0, 0),
-    (5, 45, 75, 30, 0, 0),
-    -- Информатика и ИКТ
-    (6, 30, 60, 0, 0, 30),
-    (7, 30, 60, 15, 0, 15),
-    (8, 30, 60, 15, 0, 15),
-    -- Программная инженерия
-    (9, 30, 60, 0, 0, 45),
-    (10, 45, 90, 30, 0, 30),
-    (11, 30, 50, 0, 0, 40),
-    -- Информационная безопасность
-    (12, 45, 75, 15, 15, 15),
-    (13, 45, 75, 15, 15, 15),
-    -- Системный анализ
-    (14, 45, 75, 0, 15, 15),
-    (15, 30, 60, 0, 15, 15)
-;
+-- 15. GA_RUN
+INSERT INTO ga_run (students_group_id, weeks_in_cycle) VALUES
+(1, 16),
+(2, 16),
+(3, 16);
 
--- Students_group (группы)
-INSERT INTO students_group (group_name, professor_inspector, spec_id) VALUES
-    ('M1-01', 1, 1), -- Математика
-    ('M1-02', 2, 1), -- Математика
-    ('P1-01', 2, 2), -- Прикладная математика и И
-    ('I1-01', 3, 3), -- Информатика и ИКТ
-    ('I2-01', 4, 3),
-    ('PI-101', 5, 4), -- Программная инженерия
-    ('PI-102', 5, 4),
-    ('IB-101', 6, 5), -- Информационная безопасность
-    ('SA-101', 1, 6)  -- Системный анализ
-;
+-- 16. GA_GENERATION
+INSERT INTO ga_generation (ga_run_id, generation_number) VALUES
+(1, 1),
+(1, 2),
+(2, 1);
 
--- Student (студенты)
-INSERT INTO student (students_group_id, first_name, last_name, email) VALUES
-    (1, 'Иван', 'Коваль', 'ivan.koval@uni.edu'),
-    (1, 'Олена', 'Бондар', 'olena.bondar@uni.edu'),
-    (1, 'Дмитро', 'Гончар', 'dmitro.gonchar@uni.edu'),
-    (2, 'Антон', 'Мельник', 'anton.melnik@uni.edu'),
-    (2, 'Марія', 'Скрипник', 'maria.scripnyk@uni.edu'),
-    (3, 'Сергій', 'Ковальчук', 'sergey.kovalchuk@uni.edu'),
-    (3, 'Анна', 'Литвин', 'anna.litvin@uni.edu'),
-    (4, 'Віктор', 'Анісімов', 'victor.anisimov@uni.edu'),
-    (4, 'Артем', 'Савченко', 'artem.savchenko@uni.edu'),
-    (5, 'Ілля', 'Кравченко', 'illya.kravchenko@uni.edu'),
-    (6, 'Михайло', 'Романюк', 'mikhail.romaniuk@uni.edu'),
-    (6, 'Катерина', 'Костюк', 'kateryna.kostyuk@uni.edu'),
-    (7, 'Денис', 'Павлов', 'denis.pavlov@uni.edu'),
-    (7, 'Олександр', 'Тимошенко', 'alex.tymoshenko@uni.edu'),
-    (8, 'Наталія', 'Мельник', 'natalia.melnik@uni.edu'),
-    (8, 'Владислав', 'Горбач', 'vladyslav.horbach@uni.edu'),
-    (9, 'Тетяна', 'Шевчук', 'tetyana.shevchuk@uni.edu'),
-    (9, 'Роман', 'Коваль', 'roman.koval@uni.edu')
-;
+-- 17. CHROMOSOME
+INSERT INTO chromosome (ga_generation_id, fitness_score) VALUES
+(1, 87.5),
+(2, 91.2),
+(3, 78.0);
 
--- Group_elder_student (старосты)
-INSERT INTO group_elder_student (students_group_id, student_id) VALUES
-    (1, 1), -- Иван Коваль – староста M1-01
-    (2, 4), -- Антон Мельник – староста M1-02
-    (3, 6), -- Сергій Ковальчук – староста P1-01
-    (4, 8), -- Віктор Анісімов – староста I1-01
-    (5, 11), -- Ілля Кравченко – староста I2-01
-    (6, 12), -- Михайло Романюк – староста PI-101
-    (7, 14), -- Денис Павлов – староста PI-102
-    (8, 16), -- Наталія Мельник – староста IB-101
-    (9, 18)  -- Тетяна Шевчук – староста SA-101
-;
+-- 18. CHROMOSOME_DISCIPLINE
+INSERT INTO chromosome_discipline (chromosome_id, position, discipline_id) VALUES
+(1, 1, 1),
+(2, 1, 2),
+(3, 1, 3);
 
+-- 19. SCHEDULE
+INSERT INTO schedule (
+    chromosome_id,
+    week_number,
+    time_slot_id,
+    audience_id,
+    discipline_id,
+    professor_id
+) VALUES
+(1, 1, 1, 3, 1, 1),
+(2, 1, 2, 2, 2, 2),
+(3, 1, 3, 1, 3, 3);
+
+-- 20. SCHEDULE_CONSTRAINT
+INSERT INTO schedule_constraint (
+    ga_run_id,
+    constraint_type_id,
+    kind,
+    soft_priority,
+    professor_id,
+    parameters
+) VALUES
+(
+    1,
+    1,
+    'soft',
+    5,
+    1,
+    '{"time":"18:00"}'
+),
+(
+    1,
+    4,
+    'hard',
+    NULL,
+    2,
+    '{}'
+),
+(
+    2,
+    6,
+    'soft',
+    3,
+    NULL,
+    '{"max_windows":1}'
+);
 
 COMMIT;
